@@ -1,0 +1,3 @@
+/home/raesangur/github/ncurses-test/cmake-build-debug/CMakeFiles/ncurses_test.dir
+/home/raesangur/github/ncurses-test/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/raesangur/github/ncurses-test/cmake-build-debug/CMakeFiles/rebuild_cache.dir
