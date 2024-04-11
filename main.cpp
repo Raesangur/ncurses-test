@@ -40,15 +40,112 @@
  */
 #include <ncurses.h>
 
+#include <menu.h>
+
+#include <stdlib.h>
+#include <string.h>
+
 
  /** ===============================================================================================
-  *  FUNCTION DECLARATIONS
+  *  FUNCTION DEFINITIONS
   */
 
- int main(int argc, char** argv)
- {
+int main() {
+    // Initialize ncurses
+    initscr();
+    cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
 
- }
+    // Initialize colors
+    if(has_colors() == FALSE)
+    {	endwin();
+        printf("Your terminal does not support color\n");
+        exit(1);
+    }
+    start_color();
+    init_pair(1, COLOR_WHITE, COLOR_MAGENTA);
+    init_pair(2, COLOR_WHITE, COLOR_BLACK);
+
+    // Set up menu items
+    const char* menu_items[] = {"Option 1", "Option 2", "Option 3", "Quit"};
+    int num_items = sizeof(menu_items) / sizeof(menu_items[0]);
+    int current_item = 0;
+
+    // Get screen dimensions
+    int max_y, max_x;
+    getmaxyx(stdscr, max_y, max_x);
+
+    // Define window dimensions
+    int win_width = 30;
+    int win_height = num_items + 4; // 4 is for padding
+
+    // Calculate window position
+    int win_x = (max_x - win_width) / 2;
+    int win_y = (max_y - win_height) / 2;
+
+    // Create window
+    WINDOW* menu_win = newwin(win_height, win_width, win_y, win_x);
+
+    wbkgd(menu_win, COLOR_PAIR(1));
+
+    // Display menu
+    int key;
+    do {
+        /*
+        for (int i = 0; i < num_items; i++) {
+            if (i == current_item) {
+                attron(A_REVERSE);
+            }
+            printw("%s\n", menu_items[i]);
+            attroff(A_REVERSE);
+        }
+        */
+        box(menu_win, 0, 0);
+        for (int i = 0; i < num_items; i++) {
+            if (i == current_item) {
+                wattron(menu_win, A_REVERSE);
+            }
+            mvwprintw(menu_win, i + 2, 2, "%s", menu_items[i]);
+            wattroff(menu_win, A_REVERSE);
+        }
+
+        wrefresh(menu_win);
+
+        key = getch();
+
+        switch (key) {
+            case KEY_UP:
+                current_item--;
+                if (current_item < 0) {
+                    current_item = num_items - 1;
+                }
+                break;
+            case KEY_DOWN:
+                current_item++;
+                if (current_item >= num_items) {
+                    current_item = 0;
+                }
+                break;
+            default:
+                break;
+        }
+
+    } while (key != '\n' && key != 'q');
+
+    // Process selection
+    if (key == '\n') {
+        clear();
+        printw("You selected: %s\n", menu_items[current_item]);
+        refresh();
+        getch();
+    }
+
+    // Cleanup ncurses
+    endwin();
+
+    return 0;
+}
 
 
 
