@@ -65,15 +65,24 @@ void deinitialize_ncurses()
     endwin();
 }
 
-void welcome_message(window& win)
+void format_main(window& win)
 {
     attron(A_BOLD);
 
-    win.print(0, 1, {"Bon matin"});
+    win.print(0, {"Bon matin"});
 
     wmove(win.win, 1, 1);
     win.line(win.width() - 2);
     attroff(A_BOLD);
+
+    win.print(win.height() - 3, {"Press 'q' to quit."});
+    win.print(win.height() - 2, {"Arrow keys to navigate the menu. Press 'ENTER' to enter submenu."});
+    win.print(win.height() - 1, {"Press 'ESC' to exit menu. Press 'SPACE' to select an option."});
+}
+
+void format_menu(window& win)
+{
+    win.box();
 }
 
 
@@ -85,17 +94,20 @@ int main() {
     initialize_ncurses();
 
     window mainWin = window::create_centered(-1, -1);
-    welcome_message(mainWin);
+    window menuWin = window::create_centered();
 
     if (enable_colors())
     {
-        configure_background_colors(mainWin);
+        configure_background_colors();
+        mainWin.set_color(1);
+        menuWin.set_color(2);
     }
 
-    window menuWin = window::create_centered();
-    menuWin.box();
+    format_main(mainWin);
+    format_menu(menuWin);
 
-    getch();
+    while(getch() != 'q')
+    {}
 
     deinitialize_ncurses();
     return 0;

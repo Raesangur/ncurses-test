@@ -59,12 +59,16 @@ public:
 
     void print(const std::string& message);
     void print(int y, int x, const std::string& message);
+    void print(int y, const std::string& message);
 
     template<typename... args>
     void print(const std::string& format, args... va);
 
     template<typename... args>
     void print(int y, int x, const std::string& format, args... va);
+
+    template<typename... args>
+    void print(int y, const std::string& format, args... va);
 
     void refresh();
 

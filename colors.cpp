@@ -41,6 +41,7 @@
  */
 
 constexpr int STDSCR_COLORS = 1;
+constexpr int MENU_COLORS   = 2;
 
 
 /** ===============================================================================================
@@ -64,10 +65,10 @@ bool enable_colors()
     return colors;
 }
 
-void configure_background_colors(window& mainWin)
+void configure_background_colors()
 {
     init_pair(STDSCR_COLORS, COLOR_WHITE, COLOR_BLUE);
-    mainWin.set_color(STDSCR_COLORS);
+    init_pair(MENU_COLORS, COLOR_BLACK, COLOR_WHITE);
 }
 
 

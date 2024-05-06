@@ -35,8 +35,6 @@
 /** ===============================================================================================
  *  INCLUDES
  */
-#include "window.h"
-
 #include <ncurses.h>
 
 
@@ -45,7 +43,7 @@
  */
 
 bool enable_colors();
-void configure_background_colors(window& mainWin);
+void configure_background_colors();
 
 
 #endif  // COLORS_H

@@ -34,6 +34,8 @@
  */
 #include "window.h"
 
+#include <algorithm>
+
 
 /** ===============================================================================================
  *  MEMBER FUNCTIONS DEFINITION
@@ -72,7 +74,6 @@ void window::box()
 
 void window::line(int n)
 {
-    wchar_t l[] = L"─";
     ::whline(win, ACS_HLINE, n);
     refresh();
 }
@@ -80,14 +81,17 @@ void window::line(int n)
 
 void window::print(const std::string& message)
 {
-    wprintw(win, "%s", message.c_str());
-    refresh();
+    return print("%s", message.c_str());
 }
 
 void window::print(int y, int x, const std::string& message)
 {
-    mvwprintw(win, y, x, "%s", message.c_str());
-    refresh();
+    return print(y, x, "%s", message.c_str());
+}
+
+void window::print(int y, const std::string& message)
+{
+    return print(y, "%s", message.c_str());
 }
 
 template<typename... args>
@@ -102,6 +106,18 @@ void window::print(int y, int x, const std::string& format, args... va)
 {
     mvwprintw(win, y, x, format.c_str(), va...);
     refresh();
+}
+
+template<typename... args>
+void window::print(int y, const std::string& format, args... va)
+{
+    // snprintf to NULL with length 0 is defined behavior and returns the number of characters that
+    // would have been written.
+    int len = std::snprintf(nullptr, 0, format.c_str(), va...);
+
+    int x = std::max((width() - len) / 2, 0);
+
+    return print(y, x, format, va...);
 }
 
 
