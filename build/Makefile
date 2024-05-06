@@ -129,6 +129,30 @@ ncurses_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ncurses_test.dir/build.make CMakeFiles/ncurses_test.dir/build
 .PHONY : ncurses_test/fast
 
+colors.o: colors.cpp.o
+.PHONY : colors.o
+
+# target to build an object file
+colors.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ncurses_test.dir/build.make CMakeFiles/ncurses_test.dir/colors.cpp.o
+.PHONY : colors.cpp.o
+
+colors.i: colors.cpp.i
+.PHONY : colors.i
+
+# target to preprocess a source file
+colors.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ncurses_test.dir/build.make CMakeFiles/ncurses_test.dir/colors.cpp.i
+.PHONY : colors.cpp.i
+
+colors.s: colors.cpp.s
+.PHONY : colors.s
+
+# target to generate assembly for a file
+colors.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ncurses_test.dir/build.make CMakeFiles/ncurses_test.dir/colors.cpp.s
+.PHONY : colors.cpp.s
+
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -153,6 +177,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ncurses_test.dir/build.make CMakeFiles/ncurses_test.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+window.o: window.cpp.o
+.PHONY : window.o
+
+# target to build an object file
+window.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ncurses_test.dir/build.make CMakeFiles/ncurses_test.dir/window.cpp.o
+.PHONY : window.cpp.o
+
+window.i: window.cpp.i
+.PHONY : window.i
+
+# target to preprocess a source file
+window.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ncurses_test.dir/build.make CMakeFiles/ncurses_test.dir/window.cpp.i
+.PHONY : window.cpp.i
+
+window.s: window.cpp.s
+.PHONY : window.s
+
+# target to generate assembly for a file
+window.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ncurses_test.dir/build.make CMakeFiles/ncurses_test.dir/window.cpp.s
+.PHONY : window.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -162,9 +210,15 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... ncurses_test"
+	@echo "... colors.o"
+	@echo "... colors.i"
+	@echo "... colors.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... window.o"
+	@echo "... window.i"
+	@echo "... window.s"
 .PHONY : help
 
 

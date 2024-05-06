@@ -28,7 +28,9 @@ SET(WARNINGS
     )
 
 add_executable(ncurses_test
-        main.cpp)
+        main.cpp
+        colors.cpp
+        window.cpp)
 
 target_link_libraries(ncurses_test ${CMAKE_EXE_LINKER_FLAGS})
 target_compile_options(ncurses_test PRIVATE ${WARNINGS})

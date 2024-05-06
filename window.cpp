@@ -28,59 +28,114 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * ===============================================================================================
  */
-#ifndef WINDOW_H
-#define WINDOW_H
-
 
 /** ===============================================================================================
  *  INCLUDES
  */
-#include <ncurses.h>
-
-#include <string>
+#include "window.h"
 
 
 /** ===============================================================================================
- *  CLASS DEFINITION
+ *  MEMBER FUNCTIONS DEFINITION
  */
-
-class window
+window::window(int h, int w, int y, int x):
+    h{h}, w{w}
 {
-public:
-    window(int h, int w, int y, int x);
-
-    int width() const;
-    int height() const;
-
-    void set_color(short col_id);
-
-    void box();
-    void line(int n);
-
-    void print(const std::string& message);
-    void print(int y, int x, const std::string& message);
-
-    template<typename... args>
-    void print(const std::string& format, args... va);
-
-    template<typename... args>
-    void print(int y, int x, const std::string& format, args... va);
-
-    void refresh();
+    win = ::newwin(h, w, y, x);
+    ::refresh();
+}
 
 
-    static window create_centered(int width = 0, int height = 0);
+int window::width() const
+{
+    return w;
+}
 
-public:
-    WINDOW* win = nullptr;
-
-protected:
-    int h;
-    int w;
-};
+int window::height() const
+{
+    return h;
+}
 
 
-#endif // WINDOW_H
+void window::set_color(short col_id)
+{
+    ::wbkgd(win, COLOR_PAIR(col_id));
+    refresh();
+}
+
+
+void window::box()
+{
+    ::box(win, 0, 0);
+    refresh();
+}
+
+void window::line(int n)
+{
+    wchar_t l[] = L"─";
+    ::whline(win, ACS_HLINE, n);
+    refresh();
+}
+
+
+void window::print(const std::string& message)
+{
+    wprintw(win, "%s", message.c_str());
+    refresh();
+}
+
+void window::print(int y, int x, const std::string& message)
+{
+    mvwprintw(win, y, x, "%s", message.c_str());
+    refresh();
+}
+
+template<typename... args>
+void window::print(const std::string& format, args... va)
+{
+    wprintw(win, format.c_str(), va...);
+    refresh();
+}
+
+template<typename... args>
+void window::print(int y, int x, const std::string& format, args... va)
+{
+    mvwprintw(win, y, x, format.c_str(), va...);
+    refresh();
+}
+
+
+void window::refresh()
+{
+    ::wrefresh(win);
+}
+
+
+window window::create_centered(int width, int height)
+{
+    constexpr double scaling_factor = 0.85;
+
+    int maxy = 0;
+    int maxx = 0;
+    getmaxyx(stdscr, maxy, maxx);
+
+    if (width == 0 && height == 0)
+    {
+        width  = static_cast<int>(scaling_factor * maxx);
+        height = static_cast<int>(scaling_factor * maxy);
+    }
+    else if (width == -1 && height == -1)
+    {
+        width  = maxx;
+        height = maxy;
+    }
+
+    window win{height, width, std::max((maxy - height) / 2, 0), std::max((maxx - width) / 2, 0)};
+
+    return win;
+}
+
+
 /**
  * ------------------------------------------------------------------------------------------------
  * @}
