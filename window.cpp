@@ -65,6 +65,18 @@ void window::set_color(short col_id)
     refresh();
 }
 
+void window::set_attribute(int attrs, bool activated)
+{
+    if (activated)
+    {
+        ::wattron(win, attrs);
+    }
+    else
+    {
+        ::wattroff(win, attrs);
+    }
+}
+
 
 void window::box()
 {

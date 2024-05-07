@@ -53,6 +53,7 @@ public:
     [[nodiscard]] int height() const;
 
     void set_color(short col_id);
+    void set_attribute(int attrs, bool activated);
 
     void box();
     void line(int n);

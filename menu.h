@@ -63,6 +63,11 @@ public:
     virtual void select() = 0;
     virtual void deselect() = 0;
 
+    [[nodiscard]] bool is_highlighted() const
+    {
+        return m_highlighted;
+    }
+
     void highlight()
     {
         m_highlighted = true;
@@ -192,6 +197,10 @@ public:
     void add(std::unique_ptr<menu_entry> newEntry)
     {
         m_submenus.push_back(std::move(newEntry));
+        if (m_submenus.size() == 1)
+        {
+            m_submenus[0].get()->highlight();
+        }
     }
 
     [[nodiscard]] menu_entry* highlighted_entry() const final
@@ -210,7 +219,7 @@ public:
     }
     void move_down()
     {
-        if (m_currentMenu < m_submenus.size())
+        if (m_currentMenu < m_submenus.size() - 1)
         {
             m_submenus[m_currentMenu]->dehighlight();
             m_currentMenu++;

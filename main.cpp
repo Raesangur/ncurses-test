@@ -94,7 +94,12 @@ void format_menu(window& win, const menu_top_entry* currentMenu)
     for (int i = 0; currentMenu->begin() + i < currentMenu -> end(); i++)
     {
         const menu_entry* displayedMenu = currentMenu->get(i);
+        if (displayedMenu->is_highlighted())
+        {
+            win.set_attribute(A_STANDOUT, true);
+        }
         win.print(i + 2, 5, displayedMenu->display());
+        win.set_attribute(A_STANDOUT, false);
     }
 }
 
@@ -117,7 +122,14 @@ int handle_inputs(window& menuWin, std::stack<menu_entry*>& menus)
         case ' ':
             if (currentMenu.highlighted_entry()->can_select())
             {
-                currentMenu.highlighted_entry()->select();
+                if (currentMenu.highlighted_entry()->is_selected())
+                {
+                    currentMenu.highlighted_entry()->deselect();
+                }
+                else
+                {
+                    currentMenu.highlighted_entry()->select();
+                }
             }
             break;
 
@@ -179,20 +191,18 @@ int main() {
     mainMenu.add(std::make_unique<menu_option_entry>("Test2"));
     mainMenu.add(std::make_unique<menu_option_entry>("Test3"));
     
-    format_menu(menuWin, &mainMenu);
+    std::stack<menu_entry*> menus;
+    menus.push(&mainMenu);
+    while(true)
+    {
+        menu_top_entry* currentMenu = dynamic_cast<menu_top_entry*>(menus.top());
+        format_menu(menuWin, currentMenu);
 
-    // std::stack<menu_entry*> menus;
-    // menus.push(&mainMenu);
-    // while(true)
-    // {
-    //     menu_top_entry* currentMenu = dynamic_cast<menu_top_entry*>(menus.top());
-    //     format_menu(menuWin, currentMenu);
-
-    //     if (handle_inputs(menuWin, menus) == -1)
-    //     {
-    //         break;
-    //     }
-    // }
+        if (handle_inputs(menuWin, menus) == -1)
+        {
+            break;
+        }
+    }
 
     deinitialize_ncurses();
     return 0;
