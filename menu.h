@@ -45,7 +45,7 @@
 class menu
 {
 public:
-    [[nodiscard]] menu& selected();
+    [[nodiscard]] menu* selected();
 
     void move_up();
     void move_down();

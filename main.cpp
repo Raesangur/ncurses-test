@@ -93,10 +93,15 @@ void format_menu(window& win, menu& currentMenu)
 }
 
 
-int handle_inputs(window& menuWin, std::stack<menu&>& menus)
+int handle_inputs(window& menuWin, std::stack<menu*>& menus)
 {
     int ch = getch();
-    menu& currentMenu = menus.top();
+    if (menus.size() < 1)
+    {
+        return -1;
+    }
+
+    menu& currentMenu = *menus.top();
 
     switch(ch)
     {
@@ -104,13 +109,13 @@ int handle_inputs(window& menuWin, std::stack<menu&>& menus)
             return -1;
 
         case ' ':   // SPACE
-            if (currentMenu.selected().can_highlight())
+            if (currentMenu.selected()->can_highlight())
             {
-                currentMenu.selected().highlight();
+                currentMenu.selected()->highlight();
             }
             break;
         case KEY_ENTER:      // ENTER
-            if (currentMenu.selected().can_enter())
+            if (currentMenu.selected()->can_enter())
             {
                 menus.emplace(currentMenu.selected());
             }
@@ -157,7 +162,7 @@ int main() {
 
     format_main(mainWin);
 
-    std::stack<menu&> menus;
+    std::stack<menu*> menus;
     while(true)
     {
         if (handle_inputs(menuWin, menus) == -1)
@@ -165,7 +170,7 @@ int main() {
             break;
         }
 
-        format_menu(menuWin, menus.top());
+        format_menu(menuWin, *menus.top());
     }
 
     deinitialize_ncurses();

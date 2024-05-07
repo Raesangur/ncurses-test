@@ -39,9 +39,9 @@
 /** ===============================================================================================
  *  MEMBER FUNCTION DEFINITIONS
  */
-menu& menu::selected()
+menu* menu::selected()
 {
-    return *this;
+    return this;
 }
 
 
