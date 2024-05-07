@@ -39,12 +39,14 @@
  *  INCLUDES
  */
 #include "colors.h"
+#include "menu.h"
 #include "window.h"
 
 #include <ncurses.h>
 
 #include <menu.h>
 
+#include <stack>
 #include <stdlib.h>
 #include <string.h>
 
@@ -65,6 +67,7 @@ void deinitialize_ncurses()
     endwin();
 }
 
+
 void format_main(window& win)
 {
     attron(A_BOLD);
@@ -80,9 +83,58 @@ void format_main(window& win)
     win.print(win.height() - 1, {"Press 'ESC' to exit menu. Press 'SPACE' to select an option."});
 }
 
-void format_menu(window& win)
+void format_menu(window& win, menu& currentMenu)
 {
+    static int counter = 0;
+    win.erase();
     win.box();
+
+    win.print({"%d"}, counter++);
+}
+
+
+int handle_inputs(window& menuWin, std::stack<menu&>& menus)
+{
+    int ch = getch();
+    menu& currentMenu = menus.top();
+
+    switch(ch)
+    {
+        case 'q':
+            return -1;
+
+        case ' ':   // SPACE
+            if (currentMenu.selected().can_highlight())
+            {
+                currentMenu.selected().highlight();
+            }
+            break;
+        case KEY_ENTER:      // ENTER
+            if (currentMenu.selected().can_enter())
+            {
+                menus.emplace(currentMenu.selected());
+            }
+            break;
+        case 0x1B:      // ESC
+            if (menus.size() <= 1)
+                return -1;
+            else
+                menus.pop();
+            break;
+        case KEY_UP:
+            menuWin.print("UP");
+                currentMenu.move_up();
+            break;
+        case KEY_DOWN:
+            menuWin.print("DOWN");
+                currentMenu.move_down();
+            break;
+
+        default:
+            return 0;
+    }
+
+    return 0;
 }
 
 
@@ -104,18 +156,23 @@ int main() {
     }
 
     format_main(mainWin);
-    format_menu(menuWin);
 
-    while(getch() != 'q')
-    {}
+    std::stack<menu&> menus;
+    while(true)
+    {
+        if (handle_inputs(menuWin, menus) == -1)
+        {
+            break;
+        }
+
+        format_menu(menuWin, menus.top());
+    }
 
     deinitialize_ncurses();
     return 0;
 }
 
 
-
 /**
  * ------------------------------------------------------------------------------------------------
- * @}
  */

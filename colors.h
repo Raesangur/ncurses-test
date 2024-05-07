@@ -1,6 +1,6 @@
 /**
  * ===============================================================================================
- * @file    colors.cpp
+ * @file    colors.h
  * @author  Pascal-Emmanuel Lachance
  * @p       <a href="https://www.github.com/Raesangur">Raesangur</a>
  * @p       <a href="https://www.raesangur.com/">https://www.raesangur.com/</a>
@@ -49,5 +49,4 @@ void configure_background_colors();
 #endif  // COLORS_H
 /**
  * ------------------------------------------------------------------------------------------------
- * @}
  */

@@ -49,8 +49,8 @@ class window
 public:
     window(int h, int w, int y, int x);
 
-    int width() const;
-    int height() const;
+    [[nodiscard]] int width() const;
+    [[nodiscard]] int height() const;
 
     void set_color(short col_id);
 
@@ -70,6 +70,7 @@ public:
     template<typename... args>
     void print(int y, const std::string& format, args... va);
 
+    void erase();
     void refresh();
 
 
@@ -84,8 +85,38 @@ protected:
 };
 
 
+/** ===============================================================================================
+ *  MEMBER FUNCTIONS DEFINITIONS
+ */
+
+template<typename... args>
+void window::print(const std::string& format, args... va)
+{
+    wprintw(win, format.c_str(), va...);
+    refresh();
+}
+
+template<typename... args>
+void window::print(int y, int x, const std::string& format, args... va)
+{
+    mvwprintw(win, y, x, format.c_str(), va...);
+    refresh();
+}
+
+template<typename... args>
+void window::print(int y, const std::string& format, args... va)
+{
+    // snprintf to NULL with length 0 is defined behavior and returns the number of characters that
+    // would have been written.
+    int len = std::snprintf(nullptr, 0, format.c_str(), va...);
+
+    int x = std::max((width() - len) / 2, 0);
+
+    return print(y, x, format, va...);
+}
+
+
 #endif // WINDOW_H
 /**
  * ------------------------------------------------------------------------------------------------
- * @}
  */
