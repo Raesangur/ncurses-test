@@ -54,6 +54,7 @@
 /** ===============================================================================================
  *  FUNCTION DECLARATIONS
  */
+
 void initialize_ncurses()
 {
     initscr();
@@ -83,56 +84,67 @@ void format_main(window& win)
     win.print(win.height() - 1, {"Press 'ESC' to exit menu. Press 'SPACE' to select an option."});
 }
 
-void format_menu(window& win, menu& currentMenu)
+void format_menu(window& win, const menu_top_entry* currentMenu)
 {
-    static int counter = 0;
     win.erase();
     win.box();
 
-    win.print({"%d"}, counter++);
+    win.print(0, currentMenu->get_name());
+
+    for (int i = 0; currentMenu->begin() + i < currentMenu -> end(); i++)
+    {
+        const menu_entry* displayedMenu = currentMenu->get(i);
+        win.print(i + 2, 5, displayedMenu->display());
+    }
 }
 
 
-int handle_inputs(window& menuWin, std::stack<menu*>& menus)
+int handle_inputs(window& menuWin, std::stack<menu_entry*>& menus)
 {
     int ch = getch();
-    if (menus.size() < 1)
+    if (menus.size() < 1 || menus.top() == nullptr)
     {
         return -1;
     }
 
-    menu& currentMenu = *menus.top();
+    menu_entry& currentMenu = *menus.top();
 
     switch(ch)
     {
         case 'q':
             return -1;
 
-        case ' ':   // SPACE
-            if (currentMenu.selected()->can_highlight())
+        case ' ':
+            if (currentMenu.highlighted_entry()->can_select())
             {
-                currentMenu.selected()->highlight();
+                currentMenu.highlighted_entry()->select();
             }
             break;
-        case KEY_ENTER:      // ENTER
-            if (currentMenu.selected()->can_enter())
+
+        case KEY_ENTER:
+            if (currentMenu.highlighted_entry()->can_enter())
             {
-                menus.emplace(currentMenu.selected());
+                menu_entry* newMenu = currentMenu.highlighted_entry();
+                if (newMenu != nullptr)
+                {
+                    menus.emplace(newMenu);
+                }
             }
             break;
+
         case 0x1B:      // ESC
             if (menus.size() <= 1)
                 return -1;
             else
                 menus.pop();
             break;
+
         case KEY_UP:
-            menuWin.print("UP");
-                currentMenu.move_up();
+            currentMenu.move_up();
             break;
+            
         case KEY_DOWN:
-            menuWin.print("DOWN");
-                currentMenu.move_down();
+            currentMenu.move_down();
             break;
 
         default:
@@ -162,16 +174,25 @@ int main() {
 
     format_main(mainWin);
 
-    std::stack<menu*> menus;
-    while(true)
-    {
-        if (handle_inputs(menuWin, menus) == -1)
-        {
-            break;
-        }
+    menu_top_entry mainMenu{"Main Menu"};
+    mainMenu.add(std::make_unique<menu_option_entry>("Test1"));
+    mainMenu.add(std::make_unique<menu_option_entry>("Test2"));
+    mainMenu.add(std::make_unique<menu_option_entry>("Test3"));
+    
+    format_menu(menuWin, &mainMenu);
 
-        format_menu(menuWin, *menus.top());
-    }
+    // std::stack<menu_entry*> menus;
+    // menus.push(&mainMenu);
+    // while(true)
+    // {
+    //     menu_top_entry* currentMenu = dynamic_cast<menu_top_entry*>(menus.top());
+    //     format_menu(menuWin, currentMenu);
+
+    //     if (handle_inputs(menuWin, menus) == -1)
+    //     {
+    //         break;
+    //     }
+    // }
 
     deinitialize_ncurses();
     return 0;

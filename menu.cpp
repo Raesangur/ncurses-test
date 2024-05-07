@@ -39,38 +39,6 @@
 /** ===============================================================================================
  *  MEMBER FUNCTION DEFINITIONS
  */
-menu* menu::selected()
-{
-    return this;
-}
-
-
-void menu::move_up()
-{
-
-}
-
-void menu::move_down()
-{
-
-}
-
-
-bool menu::can_enter() const
-{
-    return false;
-}
-
-bool menu::can_highlight() const
-{
-    return true;
-}
-
-
-void  menu::highlight()
-{
-
-}
 
 
 /**
