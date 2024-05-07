@@ -104,7 +104,7 @@ void format_menu(window& win, const menu_top_entry* currentMenu)
 }
 
 
-int handle_inputs(window& menuWin, std::stack<menu_entry*>& menus)
+int handle_inputs(std::stack<menu_entry*>& menus)
 {
     int ch = getch();
     if (menus.size() < 1 || menus.top() == nullptr)
@@ -133,7 +133,7 @@ int handle_inputs(window& menuWin, std::stack<menu_entry*>& menus)
             }
             break;
 
-        case KEY_ENTER:
+        case '\n':
             if (currentMenu.highlighted_entry()->can_enter())
             {
                 menu_entry* newMenu = currentMenu.highlighted_entry();
@@ -189,7 +189,9 @@ int main() {
     menu_top_entry mainMenu{"Main Menu"};
     mainMenu.add(std::make_unique<menu_option_entry>("Test1"));
     mainMenu.add(std::make_unique<menu_option_entry>("Test2"));
-    mainMenu.add(std::make_unique<menu_option_entry>("Test3"));
+    auto subMenu = std::make_unique<menu_top_entry>("Sub Menu");
+    subMenu->add(std::make_unique<menu_option_entry>("Test3"));
+    mainMenu.add(std::move(subMenu));
     
     std::stack<menu_entry*> menus;
     menus.push(&mainMenu);
@@ -198,7 +200,7 @@ int main() {
         menu_top_entry* currentMenu = dynamic_cast<menu_top_entry*>(menus.top());
         format_menu(menuWin, currentMenu);
 
-        if (handle_inputs(menuWin, menus) == -1)
+        if (handle_inputs(menus) == -1)
         {
             break;
         }
