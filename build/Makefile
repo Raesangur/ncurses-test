@@ -177,6 +177,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ncurses_test.dir/build.make CMakeFiles/ncurses_test.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+menu-manager.o: menu-manager.cpp.o
+.PHONY : menu-manager.o
+
+# target to build an object file
+menu-manager.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ncurses_test.dir/build.make CMakeFiles/ncurses_test.dir/menu-manager.cpp.o
+.PHONY : menu-manager.cpp.o
+
+menu-manager.i: menu-manager.cpp.i
+.PHONY : menu-manager.i
+
+# target to preprocess a source file
+menu-manager.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ncurses_test.dir/build.make CMakeFiles/ncurses_test.dir/menu-manager.cpp.i
+.PHONY : menu-manager.cpp.i
+
+menu-manager.s: menu-manager.cpp.s
+.PHONY : menu-manager.s
+
+# target to generate assembly for a file
+menu-manager.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ncurses_test.dir/build.make CMakeFiles/ncurses_test.dir/menu-manager.cpp.s
+.PHONY : menu-manager.cpp.s
+
 menu.o: menu.cpp.o
 .PHONY : menu.o
 
@@ -240,6 +264,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... menu-manager.o"
+	@echo "... menu-manager.i"
+	@echo "... menu-manager.s"
 	@echo "... menu.o"
 	@echo "... menu.i"
 	@echo "... menu.s"

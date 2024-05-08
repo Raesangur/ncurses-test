@@ -35,8 +35,6 @@
 /** ===============================================================================================
  *  INCLUDES
  */
-#include <ncurses.h>
-
 #include <memory>
 #include <string>
 #include <vector>

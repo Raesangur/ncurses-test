@@ -31,6 +31,7 @@ add_executable(ncurses_test
         main.cpp
         colors.cpp
         menu.cpp
+        menu-manager.cpp
         window.cpp)
 
 target_link_libraries(ncurses_test ${CMAKE_EXE_LINKER_FLAGS})

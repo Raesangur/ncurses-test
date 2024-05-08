@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/ncurses_test.dir/colors.cpp.o.d"
   "CMakeFiles/ncurses_test.dir/main.cpp.o"
   "CMakeFiles/ncurses_test.dir/main.cpp.o.d"
+  "CMakeFiles/ncurses_test.dir/menu-manager.cpp.o"
+  "CMakeFiles/ncurses_test.dir/menu-manager.cpp.o.d"
   "CMakeFiles/ncurses_test.dir/menu.cpp.o"
   "CMakeFiles/ncurses_test.dir/menu.cpp.o.d"
   "CMakeFiles/ncurses_test.dir/window.cpp.o"

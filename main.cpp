@@ -40,6 +40,7 @@
  */
 #include "colors.h"
 #include "menu.h"
+#include "menu-manager.h"
 #include "window.h"
 
 #include <ncurses.h>
@@ -104,15 +105,15 @@ void format_menu(window& win, const menu_top_entry* currentMenu)
 }
 
 
-int handle_inputs(std::stack<menu_entry*>& menus)
+int handle_inputs(menu_manager* menus)
 {
     int ch = getch();
-    if (menus.size() < 1 || menus.top() == nullptr)
+    if (menus->size() < 1 || menus->top() == nullptr)
     {
         return -1;
     }
 
-    menu_entry& currentMenu = *menus.top();
+    menu_entry& currentMenu = *menus->top();
 
     switch(ch)
     {
@@ -139,16 +140,16 @@ int handle_inputs(std::stack<menu_entry*>& menus)
                 menu_entry* newMenu = currentMenu.highlighted_entry();
                 if (newMenu != nullptr)
                 {
-                    menus.emplace(newMenu);
+                    menus->set_top(newMenu);
                 }
             }
             break;
 
         case 0x1B:      // ESC
-            if (menus.size() <= 1)
+            if (menus->size() <= 1)
                 return -1;
             else
-                menus.pop();
+                menus->pop();
             break;
 
         case KEY_UP:
@@ -186,29 +187,39 @@ int main() {
 
     format_main(mainWin);
 
-    std::vector<std::unique_ptr<menu_entry>> menuManager;
-    menuManager.push_back(std::make_unique<menu_top_entry>("Main Menu"));
-    menuManager.push_back(std::make_unique<menu_option_entry>("Test1"));
-    menuManager.push_back(std::make_unique<menu_option_entry>("Test2"));
-    menuManager.push_back(std::make_unique<menu_option_entry>("Test3"));
+    std::vector<std::unique_ptr<menu_entry>> menuVector;
+    menuVector.push_back(std::make_unique<menu_top_entry>("Main Menu"));
+    menuVector.push_back(std::make_unique<menu_option_entry>("Test1"));
+    menuVector.push_back(std::make_unique<menu_option_entry>("Test2"));
+    menuVector.push_back(std::make_unique<menu_option_entry>("Test3"));
 
-    menu_top_entry* mainMenu = dynamic_cast<menu_top_entry*>(menuManager[0].get());
-    mainMenu->add(menuManager[1].get());
-    mainMenu->add(menuManager[2].get());
-    // mainMenu->add(menuManager[3].get());
+    menu_top_entry* mainMenu = dynamic_cast<menu_top_entry*>(menuVector[0].get());
+    mainMenu->add(menuVector[1].get());
+    mainMenu->add(menuVector[2].get());
+    // mainMenu->add(menuVector[3].get());
 
     menu_top_option_entry otherMenu{"chad menu"};
-    otherMenu.add(menuManager[3].get());
+    otherMenu.add(menuVector[3].get());
     mainMenu->add(&otherMenu);
+
+    // auto mainMenu = menuManager.add<menu_top_entry>("Main Menu")
+    //     .add<menu_option_entry>("Test1")
+    //     .add<menu_option_entry>("Test2")
+    //     .add<menu_option_entry>("Test3")
+    //     .add<menu_top_option_entry>("Chad Menu")
+    //     .add<menu_option_entry>("Test 4")
+    //     .finish()
+    //     .add<menu_text_entry>("This cannot be selected!");
     
-    std::stack<menu_entry*> menus;
-    menus.push(mainMenu);
+    menu_manager* mm = menu_manager::get();
+    mm->add<menu_top_entry>("Main menu");
+
     while(true)
     {
-        menu_top_entry* currentMenu = dynamic_cast<menu_top_entry*>(menus.top());
+        menu_top_entry* currentMenu = dynamic_cast<menu_top_entry*>(mm->top());
         format_menu(menuWin, currentMenu);
 
-        if (handle_inputs(menus) == -1)
+        if (handle_inputs(mm) == -1)
         {
             break;
         }
