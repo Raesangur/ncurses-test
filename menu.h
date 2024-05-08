@@ -147,7 +147,7 @@ public:
 };
 
 
-class menu_option_entry : public menu_entry
+class menu_option_entry : public virtual menu_entry
 {
 public:
     menu_option_entry(const std::string& name) : menu_entry{name} {}
@@ -165,22 +165,22 @@ public:
         return false;
     }
 
-    [[nodiscard]] bool can_select() const final
+    [[nodiscard]] virtual bool can_select() const
     {
         return true;
     }
 
-    [[nodiscard]] bool is_selected() const final
+    [[nodiscard]] virtual bool is_selected() const
     {
         return m_selected;
     }
     
-    void select() final
+    void virtual select()
     {
         m_selected = true;
     }
 
-    void deselect() final
+    void virtual deselect()
     {
         m_selected = false;
     }
@@ -189,26 +189,28 @@ protected:
     bool m_selected = false;
 };
 
-class menu_top_entry : public menu_entry
+
+class menu_top_entry : public virtual menu_entry
 {
 public:
     menu_top_entry(const std::string& name) : menu_entry{name} {}
 
-    void add(std::unique_ptr<menu_entry> newEntry)
+    void add(menu_entry* newEntry)
     {
-        m_submenus.push_back(std::move(newEntry));
+        m_submenus.push_back(newEntry);
         if (m_submenus.size() == 1)
         {
-            m_submenus[0].get()->highlight();
+            m_submenus[0]->highlight();
         }
     }
 
-    [[nodiscard]] menu_entry* highlighted_entry() const final
+
+    [[nodiscard]] virtual menu_entry* highlighted_entry() const
     {
-        return m_submenus[m_currentMenu].get();
+        return m_submenus[m_currentMenu];
     }
 
-    void move_up() final
+    virtual void move_up()
     {
         if (m_currentMenu > 0)
         {
@@ -217,7 +219,7 @@ public:
             m_submenus[m_currentMenu]->highlight();
         }
     }
-    void move_down()
+    virtual void move_down()
     {
         if (m_currentMenu < m_submenus.size() - 1)
         {
@@ -227,7 +229,7 @@ public:
         }
     }
 
-    [[nodiscard]] bool can_enter() const final
+    [[nodiscard]] virtual bool can_enter() const
     {
         return true;
     }
@@ -255,12 +257,73 @@ public:
     }
     [[nodiscard]] const menu_entry* get(std::size_t index) const
     {
-        return m_submenus[index].get();
+        return m_submenus[index];
     }
 
 public:
     std::size_t m_currentMenu = 0;
-    std::vector<std::unique_ptr<menu_entry>> m_submenus{};
+    std::vector<menu_entry*> m_submenus{};
+};
+
+class menu_top_option_entry: public menu_top_entry, public menu_option_entry
+{
+public:
+    menu_top_option_entry(const std::string& name) : menu_entry{name}, menu_top_entry{name}, menu_option_entry{name} {}
+
+    void virtual select()
+    {
+        m_selected = true;
+
+        for(menu_entry* menu : m_submenus)
+        {
+            if (menu->can_select())
+            {
+                menu->select();
+            }
+        }
+    }
+
+    void virtual deselect()
+    {
+        m_selected = false;
+
+        
+        for(menu_entry* menu : m_submenus)
+        {
+            if (menu->can_select())
+            {
+                menu->deselect();
+            }
+        }
+    }
+
+    [[nodiscard]] menu_entry* highlighted_entry() const final
+    {
+        return menu_top_entry::highlighted_entry();
+    }
+
+    void move_up() final
+    {
+        return menu_top_entry::move_up();
+    }
+    void move_down() final
+    {
+        return menu_top_entry::move_down();
+    }
+
+    [[nodiscard]] bool can_enter() const final
+    {
+        return menu_top_entry::can_enter();
+    }
+    [[nodiscard]] bool can_select() const final
+    {
+        return menu_option_entry::can_select();
+    }
+
+    [[nodiscard]] bool is_selected() const final
+    {
+        return menu_option_entry::is_selected();
+    }
 };
 
 

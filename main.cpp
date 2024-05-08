@@ -186,15 +186,23 @@ int main() {
 
     format_main(mainWin);
 
-    menu_top_entry mainMenu{"Main Menu"};
-    mainMenu.add(std::make_unique<menu_option_entry>("Test1"));
-    mainMenu.add(std::make_unique<menu_option_entry>("Test2"));
-    auto subMenu = std::make_unique<menu_top_entry>("Sub Menu");
-    subMenu->add(std::make_unique<menu_option_entry>("Test3"));
-    mainMenu.add(std::move(subMenu));
+    std::vector<std::unique_ptr<menu_entry>> menuManager;
+    menuManager.push_back(std::make_unique<menu_top_entry>("Main Menu"));
+    menuManager.push_back(std::make_unique<menu_option_entry>("Test1"));
+    menuManager.push_back(std::make_unique<menu_option_entry>("Test2"));
+    menuManager.push_back(std::make_unique<menu_option_entry>("Test3"));
+
+    menu_top_entry* mainMenu = dynamic_cast<menu_top_entry*>(menuManager[0].get());
+    mainMenu->add(menuManager[1].get());
+    mainMenu->add(menuManager[2].get());
+    // mainMenu->add(menuManager[3].get());
+
+    menu_top_option_entry otherMenu{"chad menu"};
+    otherMenu.add(menuManager[3].get());
+    mainMenu->add(&otherMenu);
     
     std::stack<menu_entry*> menus;
-    menus.push(&mainMenu);
+    menus.push(mainMenu);
     while(true)
     {
         menu_top_entry* currentMenu = dynamic_cast<menu_top_entry*>(menus.top());
