@@ -192,10 +192,10 @@ int main() {
         ->add<menu_option_entry>("Test1")
         ->add<menu_option_entry>("Test2")
         ->add<menu_option_entry>("Test3")
-        ->add<menu_top_entry>("Chad Menu")
+        ->add<menu_top_option_entry>("Chad Menu")
             ->add<menu_option_entry>("Test 4")
         ->finish()
-        //.add<menu_text_entry>("This cannot be selected!");
+        ->add<menu_text_entry>("This cannot be selected!");
         ;
 
     while(true)
