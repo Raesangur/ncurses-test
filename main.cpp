@@ -107,6 +107,8 @@ void format_menu(window& win, const menu_top_entry* currentMenu)
 
 int handle_inputs(menu_manager* menus)
 {
+    constexpr int ESC = 0x1B;
+
     int ch = getch();
     if (menus->size() < 1 || menus->top() == nullptr)
     {
@@ -114,54 +116,68 @@ int handle_inputs(menu_manager* menus)
     }
 
     menu_entry& currentMenu = *menus->top();
+    bool inputRestriction = currentMenu.has_input_field();
 
-    switch(ch)
+    if (!inputRestriction)
     {
-        case 'q':
-            return -1;
-
-        case ' ':
-            if (currentMenu.highlighted_entry()->can_select())
-            {
-                if (currentMenu.highlighted_entry()->is_selected())
-                {
-                    currentMenu.highlighted_entry()->deselect();
-                }
-                else
-                {
-                    currentMenu.highlighted_entry()->select();
-                }
-            }
-            break;
-
-        case '\n':
-            if (currentMenu.highlighted_entry()->can_enter())
-            {
-                menu_entry* newMenu = currentMenu.highlighted_entry();
-                if (newMenu != nullptr)
-                {
-                    menus->set_top(newMenu);
-                }
-            }
-            break;
-
-        case 0x1B:      // ESC
-            if (menus->size() <= 1)
+        switch(ch)
+        {
+            case 'q':
                 return -1;
-            else
-                menus->pop();
-            break;
 
-        case KEY_UP:
-            currentMenu.move_up();
-            break;
-            
-        case KEY_DOWN:
-            currentMenu.move_down();
-            break;
+            case ' ':
+                if (currentMenu.highlighted_entry()->can_select())
+                {
+                    if (currentMenu.highlighted_entry()->is_selected())
+                    {
+                        currentMenu.highlighted_entry()->deselect();
+                    }
+                    else
+                    {
+                        currentMenu.highlighted_entry()->select();
+                    }
+                }
+                break;
 
-        default:
+            case '\n':
+                if (currentMenu.highlighted_entry()->can_enter())
+                {
+                    menu_entry* newMenu = currentMenu.highlighted_entry();
+                    if (newMenu != nullptr)
+                    {
+                        menus->set_top(newMenu);
+                    }
+                }
+                break;
+
+            case ESC:
+                if (menus->size() <= 1)
+                    return -1;
+                else
+                    menus->pop();
+                break;
+
+            case KEY_UP:
+                currentMenu.move_up();
+                break;
+                
+            case KEY_DOWN:
+                currentMenu.move_down();
+                break;
+
+            default:
+                return 0;
+        }
+    }
+    else
+    {
+        // Return to old menu on ESC or ENTER
+        if (ch == ESC || ch == '\n')
+        {
+            menus->pop();
             return 0;
+        }
+        currentMenu.input_character(ch);
     }
 
     return 0;
@@ -192,7 +208,7 @@ int main() {
         ->add<menu_option_entry>("Test1")
         ->add<menu_option_entry>("Test2")
         ->add<menu_option_entry>("Test3")
-        ->add<menu_top_option_entry>("Chad Menu")
+        ->add<menu_top_entry>("Chad Menu")
             ->add<menu_option_entry>("Test 4")
         ->finish()
         ->add<menu_text_entry>("This cannot be selected!");

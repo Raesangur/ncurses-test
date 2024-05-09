@@ -46,64 +46,31 @@
 
 class menu_entry
 {
-public:
+protected:
     menu_entry(const std::string& name) : m_name{name} {}
 
-    [[nodiscard]] virtual menu_entry* highlighted_entry() const = 0;
+public:
+    [[nodiscard]] virtual menu_entry* highlighted_entry() const;
 
-    virtual void move_up() = 0;
-    virtual void move_down() = 0;
+    virtual void move_up();
+    virtual void move_down();
 
-    [[nodiscard]] virtual bool can_enter() const = 0;
-    [[nodiscard]] virtual bool can_select() const = 0;
+    [[nodiscard]] virtual bool can_enter() const;
+    [[nodiscard]] virtual bool can_select() const;
+    [[nodiscard]] virtual bool is_selected() const;
+    virtual void select();
+    virtual void deselect();
 
-    [[nodiscard]] virtual bool is_selected() const = 0;
-    virtual void select() = 0;
-    virtual void deselect() = 0;
+    virtual void input_character(char c);
+    [[nodiscard]] virtual bool has_input_field() const;
 
-    [[nodiscard]] bool is_highlighted() const
-    {
-        return m_highlighted;
-    }
+    [[nodiscard]] bool is_highlighted() const;
+    void highlight();
+    void dehighlight();
 
-    void highlight()
-    {
-        m_highlighted = true;
-    }
+    [[nodiscard]] std::string display() const;
+    [[nodiscard]] std::string get_name() const;
 
-    void dehighlight()
-    {
-        m_highlighted = false;
-    }
-
-    [[nodiscard]] std::string display() const
-    {
-        std::string preamble = "   ";
-        std::string postamble = "";
-        
-        if (can_select())
-        {
-            if (is_selected())
-            {
-                preamble = "[*]";
-            }
-            else
-            {
-                preamble = "[ ]";
-            }
-        }
-        if (can_enter())
-        {
-            postamble = "--->";
-        }
-
-        return preamble + " " + m_name + " " + postamble;
-    }
-
-    [[nodiscard]] std::string get_name() const
-    {
-        return m_name;
-    }
 
 protected:
     bool m_highlighted = false;
@@ -116,32 +83,6 @@ class menu_text_entry : public menu_entry
 {
 public:
     menu_text_entry(const std::string& name) : menu_entry{name} {}
-
-    [[nodiscard]] menu_entry* highlighted_entry() const final
-    {
-        return nullptr;
-    }
-
-    void move_up() final{}
-    void move_down() final{}
-
-    [[nodiscard]] bool can_enter() const final
-    {
-        return false;
-    }
-
-    [[nodiscard]] bool can_select() const final
-    {
-        return false;
-    }
-
-    [[nodiscard]] bool is_selected() const final
-    {
-        return false;
-    }
-
-    void select() final{}
-    void deselect() final{}
 };
 
 
@@ -149,19 +90,6 @@ class menu_option_entry : public virtual menu_entry
 {
 public:
     menu_option_entry(const std::string& name) : menu_entry{name} {}
-
-    [[nodiscard]] virtual menu_entry* highlighted_entry() const
-    {
-        return nullptr;
-    }
-
-    void virtual move_up() {}
-    void virtual move_down() {}
-
-    [[nodiscard]] virtual bool can_enter() const
-    {
-        return false;
-    }
 
     [[nodiscard]] virtual bool can_select() const
     {
@@ -202,7 +130,6 @@ public:
         }
     }
 
-
     [[nodiscard]] virtual menu_entry* highlighted_entry() const
     {
         return m_submenus[m_currentMenu];
@@ -232,18 +159,6 @@ public:
         return true;
     }
 
-    [[nodiscard]] bool can_select() const
-    {
-        return false;
-    }
-
-    [[nodiscard]] bool is_selected() const
-    {
-        return false;
-    }
-    
-    void select(){}
-    void deselect(){}
 
     [[nodiscard]] const auto begin() const
     {
@@ -272,10 +187,20 @@ class menu_top_option_entry: public menu_top_entry, public menu_option_entry
 public:
     menu_top_option_entry(const std::string& name) : menu_entry{name}, menu_top_entry{name}, menu_option_entry{name} {}
 
+    [[nodiscard]] menu_entry* highlighted_entry() const final;
+
+    void move_up() final;
+    void move_down() final;
+
+    [[nodiscard]] bool can_enter() const final;
+    [[nodiscard]] bool can_select() const final;
+
+    [[nodiscard]] bool is_selected() const final;
+
+
     void virtual select()
     {
-        m_selected = true;
-
+        menu_option_entry::select();
         for(menu_entry* menu : m_submenus)
         {
             if (menu->can_select())
@@ -287,9 +212,7 @@ public:
 
     void virtual deselect()
     {
-        m_selected = false;
-
-        
+        menu_option_entry::deselect();
         for(menu_entry* menu : m_submenus)
         {
             if (menu->can_select())
@@ -297,34 +220,6 @@ public:
                 menu->deselect();
             }
         }
-    }
-
-    [[nodiscard]] menu_entry* highlighted_entry() const final
-    {
-        return menu_top_entry::highlighted_entry();
-    }
-
-    void move_up() final
-    {
-        return menu_top_entry::move_up();
-    }
-    void move_down() final
-    {
-        return menu_top_entry::move_down();
-    }
-
-    [[nodiscard]] bool can_enter() const final
-    {
-        return menu_top_entry::can_enter();
-    }
-    [[nodiscard]] bool can_select() const final
-    {
-        return menu_option_entry::can_select();
-    }
-
-    [[nodiscard]] bool is_selected() const final
-    {
-        return menu_option_entry::is_selected();
     }
 };
 

@@ -37,9 +37,123 @@
 
 
 /** ===============================================================================================
- *  MEMBER FUNCTION DEFINITIONS
+ *  MENU_ENTRY MEMBER FUNCTION DEFINITIONS
  */
 
+[[nodiscard]] menu_entry* menu_entry::highlighted_entry() const
+{
+    return nullptr;
+}
+
+
+[[nodiscard]] bool menu_entry::can_enter() const
+{
+    return false;
+}
+
+[[nodiscard]] bool menu_entry::can_select() const
+{
+    return false;
+}
+
+[[nodiscard]] bool menu_entry::is_selected() const
+{
+    return false;
+}
+
+
+void menu_entry::move_up() {}
+void menu_entry::move_down() {}
+
+void menu_entry::select() {}
+void menu_entry::deselect() {}
+
+void menu_entry::input_character(char c) {}
+
+[[nodiscard]] bool menu_entry::has_input_field() const
+{
+    return false;
+}
+
+
+[[nodiscard]] bool menu_entry::is_highlighted() const
+{
+    return m_highlighted;
+}
+
+void menu_entry::highlight()
+{
+    m_highlighted = true;
+}
+
+void menu_entry::dehighlight()
+{
+    m_highlighted = false;
+}
+
+
+[[nodiscard]] std::string menu_entry::display() const
+{
+    std::string preamble = "   ";
+    std::string postamble = "";
+    
+    if (can_select())
+    {
+        if (is_selected())
+        {
+            preamble = "[*]";
+        }
+        else
+        {
+            preamble = "[ ]";
+        }
+    }
+    if (can_enter())
+    {
+        postamble = "--->";
+    }
+
+    return preamble + " " + m_name + " " + postamble;
+}
+
+[[nodiscard]] std::string menu_entry::get_name() const
+{
+    return m_name;
+}
+
+
+/** ===============================================================================================
+ *  MENU_TOP_OPTION_ENTRY MEMBER FUNCTION DEFINITIONS
+ */
+
+[[nodiscard]] menu_entry* menu_top_option_entry::highlighted_entry() const
+{
+    return menu_top_entry::highlighted_entry();
+}
+
+void menu_top_option_entry::move_up()
+{
+    return menu_top_entry::move_up();
+}
+void menu_top_option_entry::move_down()
+{
+    return menu_top_entry::move_down();
+}
+
+
+[[nodiscard]] bool menu_top_option_entry::can_enter() const
+{
+    return menu_top_entry::can_enter();
+}
+[[nodiscard]] bool menu_top_option_entry::can_select() const
+{
+    return menu_option_entry::can_select();
+}
+
+[[nodiscard]] bool menu_top_option_entry::is_selected() const
+{
+    return menu_option_entry::is_selected();
+}
 
 /**
  * ------------------------------------------------------------------------------------------------

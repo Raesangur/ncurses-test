@@ -143,18 +143,16 @@ public:
         return m_mm->add<T>(name, this);
     }
 
-    submenu_manager* clean()
+    void clean()
     {
         m_child.reset();
-        return this;
     }
 
     submenu_manager* finish()
     {
         submenu_manager* parent = m_parent;
         m_mm->pop();
-        parent->clean();
-        //wprintw(stdscr, "%x", static_cast<void*>(parent));
+        parent->m_child.reset();
         return parent;
     }
 
