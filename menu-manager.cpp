@@ -43,6 +43,14 @@
 menu_manager* menu_manager::m_instance = nullptr;
 
 
+template<>
+submenu_manager* submenu_manager::add<menu_top_entry>(const std::string& name)
+{
+    m_child = std::make_unique<submenu_manager>(m_mm, this);
+    return m_mm->add<menu_top_entry, true>(name, m_child.get());
+}
+
+
 /**
  * ------------------------------------------------------------------------------------------------
  */

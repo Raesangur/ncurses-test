@@ -45,10 +45,15 @@
 #include <vector>
 
 
+// TO REMOVE
+#include <ncurses.h>
+
+
 /** ===============================================================================================
  *  CLASS DEFINITION
  */
 
+class submenu_manager;
 class menu_manager
 {
 public:
@@ -61,7 +66,7 @@ public:
     menu_manager(const menu_manager&&) = delete;
     void operator=(const menu_manager&) = delete;
 
-    [[nodiscard]] static menu_manager* menu_manager::get()
+    [[nodiscard]] static menu_manager* get()
     {
         if (m_instance == nullptr)
         {
@@ -91,24 +96,72 @@ public:
         m_menuStack.push(newTopEntry);
     }
 
-
-    template<typename T>
-    menu_manager* add(const std::string& name)
+    template<typename T, bool replace = false>
+    submenu_manager* add(const std::string& name, submenu_manager* manager)
     {
         auto [it, _] = m_menuMap.emplace(name, std::make_unique<T>(name));
+        auto entry = std::get<menuptr_t>(*it).get();
 
-        if (m_menuStack.empty())
+        if(!m_menuStack.empty())
         {
-            m_menuStack.push(std::get<menuptr_t>(*it).get());
+            menu_top_entry* currentMenu = dynamic_cast<menu_top_entry*>(m_menuStack.top());
+            currentMenu->add(entry);
         }
 
-        return this;
+        if constexpr (replace)
+        {
+            m_menuStack.push(entry);
+        }
+
+        return manager;
+    }
+
+    template<typename T>
+    submenu_manager* add(const std::string& name)
+    {
+        m_submenuManager = std::make_unique<submenu_manager>(this);
+        return add<T, true>(name, m_submenuManager.get());
     }
 
 protected:
     static menu_manager* m_instance;
-    std::stack<menu_entry*> m_menuStack;
-    std::map<std::string, menuptr_t> m_menuMap;
+    std::stack<menu_entry*> m_menuStack{};
+    std::map<std::string, menuptr_t> m_menuMap{};
+    std::unique_ptr<submenu_manager> m_submenuManager{};
+};
+
+
+class submenu_manager
+{
+public:
+    submenu_manager(menu_manager* mm) : m_mm{mm} {}
+    submenu_manager(menu_manager* mm, submenu_manager* parent) : m_mm{mm}, m_parent{parent} {}
+
+    template<typename T>
+    submenu_manager* add(const std::string& name)
+    {
+        return m_mm->add<T>(name, this);
+    }
+
+    submenu_manager* clean()
+    {
+        m_child.reset();
+        return this;
+    }
+
+    submenu_manager* finish()
+    {
+        submenu_manager* parent = m_parent;
+        m_mm->pop();
+        parent->clean();
+        //wprintw(stdscr, "%x", static_cast<void*>(parent));
+        return parent;
+    }
+
+protected:
+    menu_manager* m_mm = nullptr;
+    submenu_manager* m_parent = nullptr;
+    std::unique_ptr<submenu_manager> m_child{};
 };
 
 

@@ -253,6 +253,10 @@ public:
     {
         return m_submenus.end();
     }
+    [[nodiscard]] std::size_t size() const
+    {
+        return m_submenus.size();
+    }
     [[nodiscard]] const menu_entry* get(std::size_t index) const
     {
         return m_submenus[index];

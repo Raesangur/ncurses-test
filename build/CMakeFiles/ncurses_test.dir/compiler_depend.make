@@ -456,6 +456,7 @@ CMakeFiles/ncurses_test.dir/menu-manager.cpp.o: /mnt/e/GitHub/ncurses-test/menu-
   /usr/include/c++/11/utility \
   /usr/include/c++/11/vector \
   /usr/include/ctype.h \
+  /usr/include/curses.h \
   /usr/include/endian.h \
   /usr/include/errno.h \
   /usr/include/features-time64.h \
@@ -465,6 +466,7 @@ CMakeFiles/ncurses_test.dir/menu-manager.cpp.o: /mnt/e/GitHub/ncurses-test/menu-
   /usr/include/linux/errno.h \
   /usr/include/linux/limits.h \
   /usr/include/locale.h \
+  /usr/include/ncurses_dll.h \
   /usr/include/pthread.h \
   /usr/include/sched.h \
   /usr/include/stdc-predef.h \
@@ -473,6 +475,7 @@ CMakeFiles/ncurses_test.dir/menu-manager.cpp.o: /mnt/e/GitHub/ncurses-test/menu-
   /usr/include/stdlib.h \
   /usr/include/syscall.h \
   /usr/include/time.h \
+  /usr/include/unctrl.h \
   /usr/include/unistd.h \
   /usr/include/wchar.h \
   /usr/include/wctype.h \

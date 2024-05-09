@@ -187,32 +187,16 @@ int main() {
 
     format_main(mainWin);
 
-    std::vector<std::unique_ptr<menu_entry>> menuVector;
-    menuVector.push_back(std::make_unique<menu_top_entry>("Main Menu"));
-    menuVector.push_back(std::make_unique<menu_option_entry>("Test1"));
-    menuVector.push_back(std::make_unique<menu_option_entry>("Test2"));
-    menuVector.push_back(std::make_unique<menu_option_entry>("Test3"));
-
-    menu_top_entry* mainMenu = dynamic_cast<menu_top_entry*>(menuVector[0].get());
-    mainMenu->add(menuVector[1].get());
-    mainMenu->add(menuVector[2].get());
-    // mainMenu->add(menuVector[3].get());
-
-    menu_top_option_entry otherMenu{"chad menu"};
-    otherMenu.add(menuVector[3].get());
-    mainMenu->add(&otherMenu);
-
-    // auto mainMenu = menuManager.add<menu_top_entry>("Main Menu")
-    //     .add<menu_option_entry>("Test1")
-    //     .add<menu_option_entry>("Test2")
-    //     .add<menu_option_entry>("Test3")
-    //     .add<menu_top_option_entry>("Chad Menu")
-    //     .add<menu_option_entry>("Test 4")
-    //     .finish()
-    //     .add<menu_text_entry>("This cannot be selected!");
-    
     menu_manager* mm = menu_manager::get();
-    mm->add<menu_top_entry>("Main menu");
+    mm->add<menu_top_entry>("Main Menu")
+        ->add<menu_option_entry>("Test1")
+        ->add<menu_option_entry>("Test2")
+        ->add<menu_option_entry>("Test3")
+        ->add<menu_top_entry>("Chad Menu")
+            ->add<menu_option_entry>("Test 4")
+        ->finish()
+        //.add<menu_text_entry>("This cannot be selected!");
+        ;
 
     while(true)
     {
