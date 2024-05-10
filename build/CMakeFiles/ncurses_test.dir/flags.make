@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = 
 
-CXX_FLAGS = -std=gnu++20 -Wall -Wextra -Wpedantic -Wunused -Wconversion -Wsign-conversion -Wnull-dereference -Wdouble-promotion -Wmisleading-indentation -Wformat -Walloca -Winvalid-pch -Wno-unused-function -Wno-sign-conversion -Wno-double-promotion -fpermissive
+CXX_FLAGS = -std=gnu++23 -Wall -Wextra -Wpedantic -Wunused -Wconversion -Wsign-conversion -Wnull-dereference -Wdouble-promotion -Wmisleading-indentation -Wformat -Walloca -Winvalid-pch -Wno-unused-function -Wno-sign-conversion -Wno-double-promotion -fpermissive
 

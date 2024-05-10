@@ -38,10 +38,13 @@
  */
 #include "menu.h"
 
+#include "string-vector/stringvec.h"
+
 #include <map>
 #include <memory>
 #include <stack>
 #include <string>
+#include <string_view>
 #include <vector>
 
 
@@ -97,7 +100,7 @@ public:
     }
 
     template<typename T, bool replace = false>
-    submenu_manager* add(const std::string& name, submenu_manager* manager)
+    submenu_manager* add(const std::string_view name, submenu_manager* manager)
     {
         auto [it, _] = m_menuMap.emplace(name, std::make_unique<T>(name));
         auto entry = std::get<menuptr_t>(*it).get();
@@ -117,7 +120,7 @@ public:
     }
 
     template<typename T>
-    submenu_manager* add(const std::string& name)
+    submenu_manager* add(const std::string_view name)
     {
         m_submenuManager = std::make_unique<submenu_manager>(this);
         return add<T, true>(name, m_submenuManager.get());
@@ -138,9 +141,23 @@ public:
     submenu_manager(menu_manager* mm, submenu_manager* parent) : m_mm{mm}, m_parent{parent} {}
 
     template<typename T>
-    submenu_manager* add(const std::string& name)
+    submenu_manager* add(const std::string_view name)
     {
         return m_mm->add<T>(name, this);
+    }
+
+    template<typename T>
+    submenu_manager* add_file(const std::string_view filename)
+    {
+        stringvec lines{};
+        lines.read_file(filename);
+
+        for (const std::string_view line : lines)
+        {
+            m_mm->add<T>(line, this);
+        }
+
+        return this;
     }
 
     void clean()

@@ -1,0 +1,3 @@
+[submodule "string-vector"]
+	path = string-vector
+	url = git@github.com:raesangur/string-vector.git

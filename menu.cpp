@@ -68,7 +68,10 @@ void menu_entry::move_down() {}
 void menu_entry::select() {}
 void menu_entry::deselect() {}
 
-void menu_entry::input_character(char c) {}
+void menu_entry::input_character(int ch)
+{
+     (void)ch;
+}
 
 [[nodiscard]] bool menu_entry::has_input_field() const
 {

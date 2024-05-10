@@ -47,7 +47,7 @@
 class menu_entry
 {
 protected:
-    menu_entry(const std::string& name) : m_name{name} {}
+    menu_entry(const std::string_view name) : m_name{name} {}
 
 public:
     [[nodiscard]] virtual menu_entry* highlighted_entry() const;
@@ -61,7 +61,7 @@ public:
     virtual void select();
     virtual void deselect();
 
-    virtual void input_character(char c);
+    virtual void input_character(int ch);
     [[nodiscard]] virtual bool has_input_field() const;
 
     [[nodiscard]] bool is_highlighted() const;
@@ -82,14 +82,14 @@ protected:
 class menu_text_entry : public menu_entry
 {
 public:
-    menu_text_entry(const std::string& name) : menu_entry{name} {}
+    menu_text_entry(const std::string_view name) : menu_entry{name} {}
 };
 
 
 class menu_option_entry : public virtual menu_entry
 {
 public:
-    menu_option_entry(const std::string& name) : menu_entry{name} {}
+    menu_option_entry(const std::string_view name) : menu_entry{name} {}
 
     [[nodiscard]] virtual bool can_select() const
     {
@@ -119,7 +119,7 @@ protected:
 class menu_top_entry : public virtual menu_entry
 {
 public:
-    menu_top_entry(const std::string& name) : menu_entry{name} {}
+    menu_top_entry(const std::string_view name) : menu_entry{name} {}
 
     void add(menu_entry* newEntry)
     {
@@ -185,7 +185,7 @@ public:
 class menu_top_option_entry: public menu_top_entry, public menu_option_entry
 {
 public:
-    menu_top_option_entry(const std::string& name) : menu_entry{name}, menu_top_entry{name}, menu_option_entry{name} {}
+    menu_top_option_entry(const std::string_view name) : menu_entry{name}, menu_top_entry{name}, menu_option_entry{name} {}
 
     [[nodiscard]] menu_entry* highlighted_entry() const final;
 
