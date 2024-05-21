@@ -58,6 +58,26 @@ int window::height() const
     return h;
 }
 
+[[nodiscard]] std::tuple<int, int> window::get_yx() const
+{
+    int y = 0;
+    int x = 0;
+
+    getyx(win, y, x);
+
+    return std::tuple{y, x};
+}
+
+[[nodiscard]] std::tuple<int, int> window::get_max_yx() const
+{
+    int y = 0;
+    int x = 0;
+
+    getmaxyx(win, y, x);
+
+    return std::tuple{y, x};
+}
+
 
 void window::set_color(short col_id)
 {
@@ -77,6 +97,11 @@ void window::set_attribute(int attrs, bool activated)
     }
 }
 
+void window::scrollok(bool activated)
+{
+    ::idlok(win, activated);
+    ::scrollok(win, activated);
+}
 
 void window::box()
 {

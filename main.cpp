@@ -87,20 +87,44 @@ void format_main(window& win)
 
 void format_menu(window& win, const menu_top_entry* currentMenu)
 {
+    win.scrollok();
+
     win.erase();
     win.box();
 
+    auto [y, _] = win.get_max_yx();
+    int maxItems = std::max(0, y - 4);
+
+    int highlightedItem = 0;
+    for(int i = 0; currentMenu->begin() + i < currentMenu->end(); i++)
+    {
+        if (currentMenu->get(i)->is_highlighted())
+        {
+            highlightedItem = i;
+            break;
+        }
+    }
+
+    int start = std::max(0, highlightedItem - maxItems + 4);
+    int end = std::min(static_cast<int>(currentMenu->size()), start + maxItems);
+
     win.print(0, currentMenu->get_name());
 
-    for (int i = 0; currentMenu->begin() + i < currentMenu -> end(); i++)
+    for (int i = start; i < end; i++)
     {
         const menu_entry* displayedMenu = currentMenu->get(i);
         if (displayedMenu->is_highlighted())
         {
             win.set_attribute(A_STANDOUT, true);
         }
-        win.print(i + 2, 5, displayedMenu->display());
+        win.print(i + 2 - start, 5, displayedMenu->display());
         win.set_attribute(A_STANDOUT, false);
+    }
+
+    if (static_cast<int>(currentMenu->size()) >= maxItems)
+    {
+        win.print(win.height() - 3, 2, "|");
+        win.print(win.height() - 2, 2, "v");
     }
 }
 
@@ -236,7 +260,6 @@ int main() {
             ->finish()
         ->add<menu_top_entry>("Install packages")
             ->add<menu_top_option_entry>("C++ development")
-                ->add<menu_text_entry>("Test")
                 ->add_file<menu_option_entry>("packages/cpp-dev.txt")
                 ->finish()
             ->finish()

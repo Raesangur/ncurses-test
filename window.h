@@ -38,6 +38,7 @@
 #include <ncurses.h>
 
 #include <string>
+#include <tuple>
 
 
 /** ===============================================================================================
@@ -51,9 +52,12 @@ public:
 
     [[nodiscard]] int width() const;
     [[nodiscard]] int height() const;
+    [[nodiscard]] std::tuple<int, int> get_yx() const;
+    [[nodiscard]] std::tuple<int, int> get_max_yx() const;
 
     void set_color(short col_id);
     void set_attribute(int attrs, bool activated);
+    void scrollok(bool activated = true);
 
     void box();
     void line(int n);

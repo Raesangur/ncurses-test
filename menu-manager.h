@@ -152,6 +152,8 @@ public:
         stringvec lines{};
         lines.read_file(filename);
 
+        lines.filter_empty();
+
         for (const std::string_view line : lines)
         {
             m_mm->add<T>(line, this);
